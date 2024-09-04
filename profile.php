@@ -214,6 +214,28 @@
                             <p id="addressText">123 Main Street, City</p>
                             <input id="addressInput" type="text" value="123 Main Street, City" style="display: none;">
                         </div>
+
+                        <!-- Added employee registration details -->
+                        <div class="info-group">
+                            <label for="department">Department</label>
+                            <p id="departmentText">Planning</p>
+                            <input id="departmentInput" type="text" value="Planning" style="display: none;">
+                        </div>
+                        <div class="info-group">
+                            <label for="position">Position</label>
+                            <p id="positionText">Officer</p>
+                            <input id="positionInput" type="text" value="Officer" style="display: none;">
+                        </div>
+                        <div class="info-group">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <p id="dobText">1980-01-01</p>
+                            <input id="dobInput" type="date" value="1980-01-01" style="display: none;">
+                        </div>
+                        <div class="info-group">
+                            <label for="hireDate">Hire Date</label>
+                            <p id="hireDateText">2020-06-15</p>
+                            <input id="hireDateInput" type="date" value="2020-06-15" style="display: none;">
+                        </div>
                     </div>
 
                     <div class="profile-buttons">
@@ -224,8 +246,10 @@
                 
             </div>
             <?php include("backend/inc/footer.php");?>
-        </div>        
+        </div>
+            
     </div>
+    
 
     <!-- Core JS Files -->
     <script src="assets/js/core/jquery-3.7.1.min.js"></script>
@@ -248,6 +272,17 @@
             document.getElementById('editProfileBtn').style.display = 'none';
             document.getElementById('saveBtn').style.display = 'inline-block';
             document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            // Additional fields for employee registration
+            document.getElementById('departmentText').style.display = 'none';
+            document.getElementById('positionText').style.display = 'none';
+            document.getElementById('dobText').style.display = 'none';
+            document.getElementById('hireDateText').style.display = 'none';
+
+            document.getElementById('departmentInput').style.display = 'block';
+            document.getElementById('positionInput').style.display = 'block';
+            document.getElementById('dobInput').style.display = 'block';
+            document.getElementById('hireDateInput').style.display = 'block';
         });
 
         document.getElementById('cancelBtn').addEventListener('click', function() {
@@ -264,6 +299,17 @@
             document.getElementById('editProfileBtn').style.display = 'inline-block';
             document.getElementById('saveBtn').style.display = 'none';
             document.getElementById('cancelBtn').style.display = 'none';
+
+            // Additional fields for employee registration
+            document.getElementById('departmentText').style.display = 'block';
+            document.getElementById('positionText').style.display = 'block';
+            document.getElementById('dobText').style.display = 'block';
+            document.getElementById('hireDateText').style.display = 'block';
+
+            document.getElementById('departmentInput').style.display = 'none';
+            document.getElementById('positionInput').style.display = 'none';
+            document.getElementById('dobInput').style.display = 'none';
+            document.getElementById('hireDateInput').style.display = 'none';
         });
 
         document.getElementById('fileInput').addEventListener('change', function(event) {
