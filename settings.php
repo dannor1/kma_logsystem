@@ -10,7 +10,7 @@
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
-        <?php include('backend/inc/sidebar.php'); ?>
+        <?php include('assets/inc/sidebar.php'); ?>
         <!-- End Sidebar -->
 
         <div class="main-panel">
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <?php include('backend/inc/footer.php'); ?>
+            <?php include('assets/inc/footer.php'); ?>
         </div>
     </div>
 </body>

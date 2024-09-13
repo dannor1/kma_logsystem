@@ -29,12 +29,12 @@
 <body>
 <div class="wrapper">
     <!-- Sidebar -->
-    <?php include("backend/inc/sidebar.php");?>
+    <?php include("assets/inc/sidebar.php");?>
     <!-- End Sidebar -->
 
     <div class="main-panel">
         <div class="main-header">
-            <?php include("backend/inc/navbar.php");?>
+            <?php include("assets/inc/navbar.php");?>
         </div>
 
         <div class="container">
@@ -76,43 +76,49 @@
                                         <tbody>
                                         <!-- PHP code to fetch and display the log details -->
                                         <?php
-                                        // Sample data, replace with actual database fetch
-                                        $logs = [
-                                            [
-                                                'ID' => '1',
-                                                'Year' => '2024',
-                                                'Month' => 'August',
-                                                'DateReceived' => '19/08/2024',
-                                                'LogTime' => '10:30 AM',
-                                                'SerialNo' => '001',
-                                                'FromWhomReceived' => 'John Doe',
-                                                'DateOfLetter' => '18/08/2024',
-                                                'LetterRefNo' => 'JD/001/2024',
-                                                'ReceivedBy' => 'Admin',
-                                                'TypeOfLetter' => 'Official',
-                                                'Subject' => 'Meeting Schedule',
-                                                'AttachedFile' => 'assets/documents/ThinkPad_Yoga_460_Spec.pdf' // Sample attached file path
-                                            ],
-                                            // Add more rows as needed
-                                        ];
+                                        session_start();
+                                        include 'config.php';
 
-                                        foreach ($logs as $log) {
-                                            echo "<tr data-attached-file='{$log['AttachedFile']}'>";
-                                            echo "<td>{$log['ID']}</td>";
-                                            echo "<td>{$log['Year']}</td>";
-                                            echo "<td>{$log['Month']}</td>";
-                                            echo "<td>{$log['DateReceived']}</td>";
-                                            echo "<td>{$log['LogTime']}</td>";
-                                            echo "<td>{$log['SerialNo']}</td>";
-                                            echo "<td>{$log['FromWhomReceived']}</td>";
-                                            echo "<td>{$log['DateOfLetter']}</td>";
-                                            echo "<td>{$log['LetterRefNo']}</td>";
-                                            echo "<td>{$log['ReceivedBy']}</td>";
-                                            echo "<td>{$log['TypeOfLetter']}</td>";
-                                            echo "<td>{$log['Subject']}</td>";
-                                            echo "</tr>";
+                                        if (!isset($_SESSION['user_id'])) {
+                                            header("Location: login.php");
+                                            exit();
                                         }
+
+                                        if (!isset($_GET['id'])) {
+                                            header("Location: files.php");
+                                            exit();
+                                        }
+
+                                        $file_id = $_GET['id'];
+
+                                        $stmt = $conn->prepare("SELECT f.*, d.name as department_name, e.name as received_by_name FROM files f LEFT JOIN departments d ON f.department_id = d.id LEFT JOIN employees e ON f.received_by = e.id WHERE f.id = ?");
+                                        $stmt->bind_param("i", $file_id);
+                                        $stmt->execute();
+                                        $file = $stmt->get_result()->fetch_assoc();
+                                        $stmt->close();
+
+                                        if (!$file) {
+                                            header("Location: files.php");
+                                            exit();
+                                        }
+
+                                        $conn->close();
                                         ?>
+
+                                        <tr data-attached-file='<?php echo $file['attached_file']; ?>'>
+                                            <td><?php echo $file['id']; ?></td>
+                                            <td><?php echo $file['year']; ?></td>
+                                            <td><?php echo $file['month']; ?></td>
+                                            <td><?php echo $file['date_received']; ?></td>
+                                            <td><?php echo $file['log_time']; ?></td>
+                                            <td><?php echo $file['serial_no']; ?></td>
+                                            <td><?php echo $file['from_whom_received']; ?></td>
+                                            <td><?php echo $file['date_of_letter']; ?></td>
+                                            <td><?php echo $file['letter_ref_no']; ?></td>
+                                            <td><?php echo $file['received_by_name']; ?></td>
+                                            <td><?php echo $file['type_of_letter']; ?></td>
+                                            <td><?php echo $file['subject']; ?></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -132,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            <?php include("backend/inc/footer.php");?>
+            <?php include("assets/inc/footer.php");?>
         </div>
     </div>
 </div>

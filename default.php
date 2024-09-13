@@ -44,15 +44,15 @@
   <body>
     <div class="wrapper">
       <!-- Sidebar -->
-    <?php include("backend/inc/sidebar.php"); ?>
+    <?php include("assets/inc/sidebar.php"); ?>
     <!-- End Sidebar -->
       
     <!-- Header -->
-    <?php include("backend/inc/navbar.php"); ?>
+    <?php include("assets/inc/navbar.php"); ?>
     <!-- Header -->
 
     </div>
 </body>
 <footer>
-<?php include("backend/inc/footer.php"); ?>  
+<?php include("assets/inc/footer.php"); ?>  
 </footer>
