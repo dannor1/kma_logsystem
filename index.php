@@ -1,3 +1,34 @@
+<?php
+session_start();
+include 'config.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Fetch dashboard data
+$stmt = $conn->prepare("SELECT 
+    SUM(CASE WHEN file_process = 'incoming' THEN 1 ELSE 0 END) as incoming_files,
+    SUM(CASE WHEN file_process = 'outgoing' THEN 1 ELSE 0 END) as outgoing_files,
+    SUM(CASE WHEN file_process = 'pending' THEN 1 ELSE 0 END) as pending_files
+    FROM files");
+$stmt->execute();
+$result = $stmt->get_result();
+$dashboard_data = $result->fetch_assoc();
+
+// Fetch recent activities
+$stmt = $conn->prepare("SELECT f.subject, f.file_process, f.date_received, e.name as employee_name 
+    FROM files f 
+    JOIN employees e ON f.received_by = e.id 
+    ORDER BY f.date_received DESC LIMIT 5");
+$stmt->execute();
+$recent_activities = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,7 +178,7 @@
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
-        <?php include("backend/inc/sidebar.php");?>
+        <?php include("assets/inc/sidebar.php");?>
         <!-- End Sidebar -->
 
         <div class="main-panel">
@@ -172,77 +203,52 @@
                     </div>
                     <!-- End Logo Header -->
                 </div>
-                <?php include("backend/inc/navbar.php")?>
+                <?php include("assets/inc/navbar.php")?>
             </div>
 
             <div class="container">
                 <div class="page-inner fade-in">
                     <div class="dashboard-widgets">
-                        <!-- Widget: Total File Transactions -->
-                        <div class="widget">
-                            <div class="widget-icon" aria-label="Total File Transactions Icon">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <div class="widget-info">
-                                <h3>1,234</h3>
-                                <p>Total File Transactions</p>
-                            </div>
-                        </div>
-
-                        <!-- Widget: Total Files -->
-                        <div class="widget">
-                            <div class="widget-icon" aria-label="Total Files Icon">
-                                <i class="fas fa-folder-open"></i>
-                            </div>
-                            <div class="widget-info">
-                                <h3>456</h3>
-                                <p>Total Files</p>
-                            </div>
-                        </div>
-
-                        <!-- Widget: Total Incoming Files -->
                         <div class="widget">
                             <div class="widget-icon" aria-label="Total Incoming Files Icon">
                                 <i class="fas fa-arrow-down"></i>
                             </div>
                             <div class="widget-info">
-                                <h3>123</h3>
+                                <h3><?php echo $dashboard_data['incoming_files']; ?></h3>
                                 <p>Total Incoming Files</p>
                             </div>
                         </div>
 
-                        <!-- Widget: Total Outgoing Files -->
                         <div class="widget">
                             <div class="widget-icon" aria-label="Total Outgoing Files Icon">
                                 <i class="fas fa-arrow-up"></i>
                             </div>
                             <div class="widget-info">
-                                <h3>78</h3>
+                                <h3><?php echo $dashboard_data['outgoing_files']; ?></h3>
                                 <p>Total Outgoing Files</p>
                             </div>
                         </div>
 
-                        <!-- Widget: Pending Files -->
                         <div class="widget">
                             <div class="widget-icon" aria-label="Pending Files Icon">
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div class="widget-info">
-                                <h3>56</h3>
+                                <h3><?php echo $dashboard_data['pending_files']; ?></h3>
                                 <p>Pending Files</p>
                             </div>
                         </div>
 
-                        <!-- Widget: Recent Activities -->
                         <div class="widget recent-activities">
                             <h4>Recent Activities</h4>
                             <ul>
-                                <li>File A - Sent <span class="timestamp">10:30 AM</span></li>
-                                <li>File B - Received <span class="timestamp">9:15 AM</span></li>
-                                <!-- More activities here -->
+                                <?php foreach ($recent_activities as $activity): ?>
+                                    <li><?php echo htmlspecialchars($activity['subject']); ?> - <?php echo ucfirst($activity['file_process']); ?> 
+                                        <span class="timestamp"><?php echo date('h:i A', strtotime($activity['date_received'])); ?></span>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
-                            <!-- If more activities are present, add a "View All" button -->
-                            <button class="btn btn-primary">View All</button>
+                            <a href="files.php" class="btn btn-primary">View All</a>
                         </div>
                     </div> <!-- End of dashboard-widgets -->
                 </div> <!-- End of page-inner -->
@@ -251,7 +257,7 @@
     </div> <!-- End of wrapper -->
 
     <!-- Footer -->
-    <?php include("backend/inc/footer.php")?>
+    <?php include("assets/inc/footer.php")?>
 
     <!-- Core JS Files -->
     <script src="assets/js/core/jquery-3.7.1.min.js"></script>
